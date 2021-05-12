@@ -1,5 +1,5 @@
 <?php
-namespace ENF\James;
+namespace ENF\James\Application;
 
 class ConsoleApplication
 {
