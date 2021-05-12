@@ -1,5 +1,5 @@
 <?php
-namespace ENF\James\Application;
+namespace ENF\James\Framework\Application;
 
 class WebApplication
 {

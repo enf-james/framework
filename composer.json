@@ -10,7 +10,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "ENF\\James\\": "src/"
+            "ENF\\James\\Framework\\": "src/"
         },
         "files": [
             "src/functions.php"
