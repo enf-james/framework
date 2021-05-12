@@ -1,0 +1,24 @@
+{
+    "name": "enf-james/framework",
+    "description": "PHP framework",
+    "type": "library",
+    "authors": [
+        {
+            "name": "James",
+            "email": "james@enfsolar.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "ENF\\James\\": "src/"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "require": {
+        "psr/http-server-middleware": "^1.0",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-message": "^1.0"
+    }
+}
