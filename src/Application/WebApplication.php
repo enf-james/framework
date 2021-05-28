@@ -1,6 +1,7 @@
 <?php
 namespace ENF\James\Framework\Application;
 
+use ENF\James\Framework\Response\ResponseEmitter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -13,8 +14,6 @@ class WebApplication implements RequestHandlerInterface
     protected static $instance;
 
     protected $projectDir;
-
-    protected $container;
 
     protected $middlewareDispatcher;
 
@@ -55,10 +54,13 @@ class WebApplication implements RequestHandlerInterface
     {
         try {
             $this->boot();
-            $request = $this->createRequestFromGlobals();
+            $request = $this->createRequest();
             $response = $this->handle($request);
-            $this->sendResponse($response);
+            $this->emitResponse($response);
         } catch (\Throwable $exception) {
+            echo $exception->getCode();
+            echo $exception->getMessage();
+            return;
             // TODO
             throw $exception;
         }
@@ -78,13 +80,32 @@ class WebApplication implements RequestHandlerInterface
     }
 
 
-    public function createRequestFromGlobals()
+    /**
+     * @return ServerRequestInterface
+     * @see \Nyholm\Psr7Server\ServerRequestCreator
+     */
+    public function createRequest()
     {
+        $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
 
+        $creator = new \Nyholm\Psr7Server\ServerRequestCreator(
+            $psr17Factory, // ServerRequestFactory
+            $psr17Factory, // UriFactory
+            $psr17Factory, // UploadedFileFactory
+            $psr17Factory  // StreamFactory
+        );
+
+        return $creator->fromGlobals();
     }
 
-    public function sendResponse(ResponseInterface $response)
-    {
 
+    /**
+     * @see \Slim\ResponseEmitter
+     * @link https://docs.laminas.dev/laminas-httphandlerrunner/emitters/
+     */
+    public function emitResponse(ResponseInterface $response)
+    {
+        $responseEmitter = new ResponseEmitter();
+        $responseEmitter->emit($response);
     }
 }
