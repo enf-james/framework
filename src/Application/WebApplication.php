@@ -1,15 +1,16 @@
 <?php
 namespace ENF\James\Framework\Application;
 
+use ENF\James\Framework\Middleware\MiddlewareDispatcher;
 use ENF\James\Framework\Response\ResponseEmitter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
 
 class WebApplication implements RequestHandlerInterface
 {
     use ContainerAwareTrait;
-
 
     protected static $instance;
 
@@ -58,11 +59,7 @@ class WebApplication implements RequestHandlerInterface
             $response = $this->handle($request);
             $this->emitResponse($response);
         } catch (\Throwable $exception) {
-            echo $exception->getCode();
-            echo $exception->getMessage();
-            return;
-            // TODO
-            throw $exception;
+            $this->handleException($exception);
         }
 
     }
@@ -76,7 +73,7 @@ class WebApplication implements RequestHandlerInterface
 
     public function boot()
     {
-
+        $this->middlewareDispatcher = new MiddlewareDispatcher();
     }
 
 
@@ -107,5 +104,13 @@ class WebApplication implements RequestHandlerInterface
     {
         $responseEmitter = new ResponseEmitter();
         $responseEmitter->emit($response);
+    }
+
+
+    public function handleException(Throwable $exception)
+    {
+        echo $exception->getCode();
+        echo $exception->getMessage();
+        return;
     }
 }
