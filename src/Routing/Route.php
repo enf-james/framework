@@ -2,6 +2,7 @@
 namespace ENF\James\Framework\Routing;
 
 use ENF\James\Framework\Middleware\MiddlewareDispatcher;
+use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -20,7 +21,7 @@ class Route implements RequestHandlerInterface
     private $path;
 
     /**
-     * @var callable
+     * @var callable|string
      */
     private $handler;
 
@@ -32,7 +33,7 @@ class Route implements RequestHandlerInterface
     /**
      * @var array
      */
-    private $routeArgs = [];
+    private $arguments = [];
 
     /**
      * @var array
@@ -80,14 +81,14 @@ class Route implements RequestHandlerInterface
         return $this;
     }
 
-    public function getRouteArgs()
+    public function getArguments()
     {
-        return $this->routeArgs;
+        return $this->arguments;
     }
 
-    public function setRouteArgs($routeArgs)
+    public function setArguments($arguments)
     {
-        $this->routeArgs = $routeArgs;
+        $this->arguments = $arguments;
         return $this;
     }
 
@@ -100,31 +101,6 @@ class Route implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        container()->set(\Psr\Http\Message\ServerRequestInterface::class, $request);
-        $callable = container()->call([CallableResolver::class, 'resolve'], [$this->getHandler()]);
-        return container()->call($callable, $this->getArguments());
+        return new Response();
     }
-
-
-    /**
-     * @param string|string[] $middleware
-     */
-    public function addMiddleware($middleware)
-    {
-        $middleware = is_array($middleware) ? $middleware : func_get_args();
-        $this->middlewareDispatcher->addMiddleware($middleware);
-        return $this;
-    }
-
-
-    /**
-     * @param string|string[] $middleware
-     */
-    public function prependMiddleware($middleware)
-    {
-        $middleware = is_array($middleware) ? $middleware : func_get_args();
-        $this->middlewareDispatcher->prependMiddleware($middleware);
-        return $this;
-    }
-
 }

@@ -16,6 +16,11 @@ class MiddlewareDispatcher implements RequestHandlerInterface
     protected $tip;
 
 
+    public function __construct(RequestHandlerInterface $fallbackHandler)
+    {
+        $this->tip = $fallbackHandler;
+    }
+
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface

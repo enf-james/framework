@@ -6,6 +6,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Router
 {
+    public const ROUTE = '__route__';
+
     /**
      * @var RouteCollectorInterface
      */
