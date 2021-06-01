@@ -6,6 +6,7 @@ use ENF\James\Framework\Container\ContainerTrait;
 use ENF\James\Framework\Middleware\MiddlewareDispatcher;
 use ENF\James\Framework\Middleware\MiddlewareDispatcherTrait;
 use ENF\James\Framework\Response\ResponseEmitter;
+use ENF\James\Framework\Routing\Router;
 use ENF\James\Framework\Routing\RouteRunner;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -53,6 +54,7 @@ class WebApplication implements ApplicationInterface, RequestHandlerInterface
     public function setup()
     {
         $this->setupContainer();
+        $this->setupRouter();
         $this->setupMiddleware();
     }
 
@@ -73,6 +75,13 @@ class WebApplication implements ApplicationInterface, RequestHandlerInterface
         $routeRunner = new RouteRunner();
         $middlewareDispatcher = new MiddlewareDispatcher($routeRunner);
         $this->setMiddlewareDispatcher($middlewareDispatcher);
+    }
+
+
+    public function setupRouter()
+    {
+        /** @var Router $router */
+        $router = $this->getContainer()->get(Router::class);
     }
 
 

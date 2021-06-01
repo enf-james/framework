@@ -1,6 +1,7 @@
 <?php
 namespace ENF\James\Framework\Middleware;
 
+use ENF\James\Framework\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
