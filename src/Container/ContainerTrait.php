@@ -1,9 +1,9 @@
 <?php
-namespace ENF\James\Framework\Application;
+namespace ENF\James\Framework\Container;
 
 use Psr\Container\ContainerInterface;
 
-trait ContainerAwareTrait
+trait ContainerTrait
 {
     /**
      * @var ContainerInterface

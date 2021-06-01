@@ -27,14 +27,19 @@ trait RouteTrait
     protected $routeGroups = [];
 
 
-    public function get($route, $handler)
+    public function request($method, $path, $handler)
     {
-        return $this->request('GET', $route, $handler);
+
     }
 
-    public function post($route, $handler)
+    public function get($path, $handler)
     {
-        return $this->request('POST', $route, $handler);
+        return $this->request('GET', $path, $handler);
+    }
+
+    public function post($path, $handler)
+    {
+        return $this->request('POST', $path, $handler);
     }
 
 

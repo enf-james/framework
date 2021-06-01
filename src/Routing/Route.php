@@ -1,13 +1,11 @@
 <?php
 namespace ENF\James\Framework\Routing;
 
-use Demo\Framework\Foundation\CallableResolver;
-use Demo\Framework\Foundation\MiddlewareDispatcher;
+use ENF\James\Framework\Middleware\MiddlewareDispatcher;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-use function Demo\Framework\Foundation\container;
 
 class Route implements RequestHandlerInterface
 {
@@ -27,11 +25,6 @@ class Route implements RequestHandlerInterface
     private $handler;
 
     /**
-     * @var int
-     */
-    private $id;
-
-    /**
      * @var string
      */
     private $name;
@@ -39,7 +32,7 @@ class Route implements RequestHandlerInterface
     /**
      * @var array
      */
-    private $arguments = [];
+    private $routeArgs = [];
 
     /**
      * @var array
@@ -57,6 +50,7 @@ class Route implements RequestHandlerInterface
         $this->method = $method;
         $this->path = $path;
         $this->handler = $handler;
+
         $this->middlewareDispatcher = new MiddlewareDispatcher($this);
     }
 
@@ -75,17 +69,6 @@ class Route implements RequestHandlerInterface
         return $this->handler;
     }
 
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
     public function getName()
     {
         return $this->name;
@@ -97,14 +80,14 @@ class Route implements RequestHandlerInterface
         return $this;
     }
 
-    public function getArguments()
+    public function getRouteArgs()
     {
-        return $this->arguments;
+        return $this->routeArgs;
     }
 
-    public function setArguments($arguments)
+    public function setRouteArgs($routeArgs)
     {
-        $this->arguments = $arguments;
+        $this->routeArgs = $routeArgs;
         return $this;
     }
 

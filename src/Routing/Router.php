@@ -1,16 +1,21 @@
 <?php
 namespace ENF\James\Framework\Routing;
 
-use ENF\James\Framework\Routing\Exception\MethodNotAllowedException;
-use ENF\James\Framework\Routing\Exception\RouteNotFoundException;
-use FastRoute\RouteCollector;
 use Psr\Http\Message\ServerRequestInterface;
-use RuntimeException;
 
 
 class Router
 {
-    use RouteTrait;
+    /**
+     * @var RouteCollectorInterface
+     */
+    protected $routeCollector;
+
+
+    public function __construct(RouteCollectorInterface $routeCollector)
+    {
+        $this->routeCollector = $routeCollector;
+    }
 
 
     /**

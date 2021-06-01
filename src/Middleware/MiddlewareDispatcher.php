@@ -17,8 +17,6 @@ class MiddlewareDispatcher implements RequestHandlerInterface
 
 
     /**
-     * Invoke the middleware stack
-     *
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
@@ -29,14 +27,8 @@ class MiddlewareDispatcher implements RequestHandlerInterface
 
 
     /**
-     * Add a new middleware to the stack
-     *
-     * Middleware are organized as a stack. That means middleware
-     * that have been added before will be executed after the newly
-     * added one (last in, first out).
-     *
      * @param MiddlewareInterface $middleware
-     * @return MiddlewareDispatcher
+     * @return static
      */
     public function addMiddleware(MiddlewareInterface $middleware): MiddlewareDispatcher
     {

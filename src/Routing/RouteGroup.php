@@ -1,117 +1,47 @@
 <?php
 namespace ENF\James\Framework\Routing;
 
-use Demo\Framework\Foundation\CallableResolver;
-use Symfony\Component\VarDumper\Exception\ThrowingCasterException;
 
-use function Demo\Framework\Foundation\container;
-
-class RouteGroup
+class RouteGroup implements RouteCollectorInterface
 {
-    use RouteTrait;
-
-
-    /**
-     * @var Router
-     */
-    protected $router;
-
+    use RouteCollectorTrait;
 
     /**
-     * @var callable
+     * @var RouteCollector
      */
-    protected $callback;
+    protected $routeCollector;
 
-    /**
-     * @var array
-     */
-    protected $middleware = [];
+    protected $pathPrefix;
 
-    public function __construct(Router $router)
+    protected $namePrefix;
+
+
+    public function __construct(RouteCollectorInterface $routeCollector)
     {
-        $this->router = $router;
+        $this->routeCollector = $routeCollector;
     }
 
 
-    public function buildRoutes()
+    public function setPathPrefix(string $pathPrefix)
     {
-        /** @var callable $callable */
-        $callable = container()->call([CallableResolver::class, 'resolve'], [$this->callback]);
-        $callable($this);
-        foreach ($this->routes as $route) {
-            $route->prependMiddleware($this->middleware);
-        }
-        foreach ($this->routeGroups as $group) {
-            $group->prependMiddleware($this->middleware)->buildRoutes();
-        }
+        $this->pathPrefix = $pathPrefix;
         return $this;
     }
 
-
-    public function group($prefix, $callback)
+    public function getPathPrefix()
     {
-        $prefix = $this->router->joinPath($this->prefix, $prefix);
-        $routeGroup = $this->router->group($prefix, $callback);
-        $this->addRouteGroup($routeGroup);
-        return $routeGroup;
+        return $this->pathPrefix;
     }
 
-    /**
-     * @param string|string[] $httpMethod
-     * @param string $route
-     * @param mixed  $handler
-     * @return Route
-     */
-    public function request($httpMethod, $uriPath, $handler)
+    public function setNamePrefix(string $namePrefix)
     {
-        $uriPath = $this->router->joinPath($this->prefix, $uriPath);
-        $route = $this->router->request($httpMethod, $uriPath, $handler);
-        $this->addRoute($route);
-        return $route;
-    }
-
-
-    public function getCallback()
-    {
-        return $this->callback;
-    }
-
-
-    public function setCallback($callback)
-    {
-        $this->callback = $callback;
+        $this->namePrefix = $namePrefix;
         return $this;
     }
 
-
-    /**
-     * @param string|string[] $middleware
-     */
-    public function middleware($middleware)
+    public function getNamePrefix()
     {
-        $middleware = is_array($middleware) ? $middleware : func_get_args();
-        $this->middleware = $middleware;
-        return $this;
+        return $this->namePrefix;
     }
 
-
-    /**
-     * @param string|string[] $middleware
-     */
-    public function addMiddleware($middleware)
-    {
-        $middleware = is_array($middleware) ? $middleware : func_get_args();
-        array_push($this->middleware, ...$middleware);
-        return $this;
-    }
-
-    /**
-     * @param string|string[] $middleware
-     */
-    public function prependMiddleware($middleware)
-    {
-        $middleware = is_array($middleware) ? $middleware : func_get_args();
-        array_unshift($this->middleware, ...$middleware);
-        return $this;
-    }
 }

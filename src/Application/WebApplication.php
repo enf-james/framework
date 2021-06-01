@@ -1,64 +1,42 @@
 <?php
 namespace ENF\James\Framework\Application;
 
+use DI\ContainerBuilder;
+use ENF\James\Framework\Container\ContainerTrait;
 use ENF\James\Framework\Middleware\MiddlewareDispatcher;
+use ENF\James\Framework\Middleware\MiddlewareDispatcherTrait;
 use ENF\James\Framework\Response\ResponseEmitter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 
-class WebApplication implements RequestHandlerInterface
+class WebApplication implements ApplicationInterface, RequestHandlerInterface
 {
-    use ContainerAwareTrait;
-
-    protected static $instance;
+    use ContainerTrait;
+    use MiddlewareDispatcherTrait;
 
     protected $projectDir;
-
-    protected $middlewareDispatcher;
-
-
-    public function __construct($projectDir = null)
-    {
-        if ($projectDir) {
-            $this->setProjectDir($projectDir);
-        }
-        static::setInstance($this);
-    }
-
 
     public function getProjectDir()
     {
         return $this->projectDir;
     }
 
-
     public function setProjectDir($projectDir)
     {
         $this->projectDir = $projectDir;
-    }
-
-    public static function getInstance()
-    {
-        return static::$instance;
-    }
-
-
-    public static function setInstance($instance)
-    {
-        static::$instance = $instance;
     }
 
 
     public function run()
     {
         try {
-            $this->boot();
+            $this->setup();
             $request = $this->createRequest();
             $response = $this->handle($request);
             $this->emitResponse($response);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->handleException($exception);
         }
 
@@ -71,9 +49,28 @@ class WebApplication implements RequestHandlerInterface
     }
 
 
-    public function boot()
+    public function setup()
     {
-        $this->middlewareDispatcher = new MiddlewareDispatcher();
+        $this->setupContainer();
+        $this->setupMiddleware();
+    }
+
+
+    public function setupContainer()
+    {
+        $builder = new ContainerBuilder();
+        $builder->useAutowiring(true);
+        $builder->useAnnotations(false);
+        $container = $builder->build();
+        $container->set(static::class, $this);
+        $this->setContainer($container);
+    }
+
+
+    public function setupMiddleware()
+    {
+        $middlewareDispatcher = new MiddlewareDispatcher();
+        $this->setMiddlewareDispatcher($middlewareDispatcher);
     }
 
 
@@ -109,6 +106,7 @@ class WebApplication implements RequestHandlerInterface
 
     public function handleException(Throwable $exception)
     {
+        echo __METHOD__;
         echo $exception->getCode();
         echo $exception->getMessage();
         return;

@@ -1,7 +1,7 @@
 <?php
 namespace ENF\James\Framework\Application;
 
-class ConsoleApplication
+class ConsoleApplication implements ApplicationInterface
 {
 
 }
