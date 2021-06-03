@@ -11,37 +11,22 @@ class RouteGroup implements RouteCollectorInterface
      */
     protected $routeCollector;
 
-    protected $pathPrefix;
+    /**
+     * @var \Closure
+     */
+    protected $closure;
 
-    protected $namePrefix;
 
-
-    public function __construct(RouteCollectorInterface $routeCollector)
+    public function __construct(RouteCollectorInterface $routeCollector, $closure)
     {
         $this->routeCollector = $routeCollector;
+        $this->closure = $closure;
     }
 
 
-    public function setPathPrefix(string $pathPrefix)
+    public function collectRoutes()
     {
-        $this->pathPrefix = $pathPrefix;
+        $this->closure->call($this);
         return $this;
     }
-
-    public function getPathPrefix()
-    {
-        return $this->pathPrefix;
-    }
-
-    public function setNamePrefix(string $namePrefix)
-    {
-        $this->namePrefix = $namePrefix;
-        return $this;
-    }
-
-    public function getNamePrefix()
-    {
-        return $this->namePrefix;
-    }
-
 }

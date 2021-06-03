@@ -14,9 +14,15 @@ class Router
     protected $routeCollector;
 
 
-    public function __construct(RouteCollectorInterface $routeCollector)
+    public function setRouteCollector($routeCollector)
     {
         $this->routeCollector = $routeCollector;
+    }
+
+
+    public function getRouteCollector()
+    {
+        return $this->routeCollector;
     }
 
 

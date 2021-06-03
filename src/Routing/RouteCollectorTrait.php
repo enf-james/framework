@@ -9,26 +9,34 @@ trait RouteCollectorTrait
      */
     protected $routes = [];
 
-
     /**
      * @var RouteGroup[]
      */
     protected $groups = [];
 
+    /**
+     * @var string
+     */
+    protected $pathPrefix = '';
+
+    /**
+     * @var string
+     */
+    protected $namePrefix = '';
+
 
     public function request(string $method, string $path, $handler): Route
     {
-        $path  = sprintf('/%s', ltrim($path, '/'));
+        $path = $this->getPathPrefix() . $path;
         $route = new Route($method, $path, $handler);
         $this->routes[] = $route;
         return $route;
     }
 
 
-    public function group($callable): RouteGroup
+    public function group($closure): RouteGroup
     {
-        $group = new RouteGroup($this);
-        $callable($group);
+        $group = new RouteGroup($this, $closure);
         $this->groups[] = $group;
         return $group;
     }
@@ -68,4 +76,28 @@ trait RouteCollectorTrait
     {
         return $this->request('PUT', $path, $handler);
     }
+
+
+    public function setPathPrefix(string $pathPrefix)
+    {
+        $this->pathPrefix = $pathPrefix;
+        return $this;
+    }
+
+    public function getPathPrefix()
+    {
+        return $this->pathPrefix;
+    }
+
+    public function setNamePrefix(string $namePrefix)
+    {
+        $this->namePrefix = $namePrefix;
+        return $this;
+    }
+
+    public function getNamePrefix()
+    {
+        return $this->namePrefix;
+    }
+
 }
