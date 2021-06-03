@@ -1,19 +1,26 @@
 <?php
 namespace ENF\James\Framework\Routing;
 
-use ENF\James\Framework\Middleware\MiddlewareDispatcher;
+use ENF\James\Framework\Middleware\MiddlewareDispatcherTrait;
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 
-class Route implements RequestHandlerInterface
+class Route extends RouteCollector implements RequestHandlerInterface
 {
+    use MiddlewareDispatcherTrait;
+
     /**
-     * @var string
+     * @var RouteCollector
      */
-    private $method;
+    protected $routeCollector;
+
+    /**
+     * @var string[]
+     */
+    private $methods = [];
 
     /**
      * @var string Uri path
@@ -40,29 +47,41 @@ class Route implements RequestHandlerInterface
      */
     private $middleware = [];
 
-    /**
-     * @var
-     */
-    private $middlewareDispatcher;
 
-
-    public function __construct($method, $path, $handler)
+    public function __construct(RouteCollectorInterface $routeCollector)
     {
-        $this->method = $method;
-        $this->path = $path;
-        $this->handler = $handler;
-
-        $this->middlewareDispatcher = new MiddlewareDispatcher($this);
+        $this->routeCollector = $routeCollector;
     }
 
-    public function getMethod()
+    /**
+     * @param string|string[]
+     */
+    public function setMethods($methods)
     {
-        return $this->method;
+        $this->methods = (array) $methods;
+        return $this;
+    }
+
+    public function getMethods()
+    {
+        return $this->methods;
+    }
+
+    public function setPath($path)
+    {
+        $this->path = $this->routeCollector->pathPrefix . $path;
+        return $this;
     }
 
     public function getPath()
     {
         return $this->path;
+    }
+
+    public function setHandler($handler)
+    {
+        $this->handler = $handler;
+        return $this;
     }
 
     public function getHandler()
@@ -77,7 +96,7 @@ class Route implements RequestHandlerInterface
 
     public function setName($name)
     {
-        $this->name = $name;
+        $this->name = $this->routeCollector->namePrefix . $name;
         return $this;
     }
 
