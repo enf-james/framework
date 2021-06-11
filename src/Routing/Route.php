@@ -1,6 +1,7 @@
 <?php
 namespace ENF\James\Framework\Routing;
 
+use ENF\James\Framework\Middleware\MiddlewareDispatcher;
 use ENF\James\Framework\Middleware\MiddlewareDispatcherTrait;
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
@@ -51,6 +52,7 @@ class Route extends RouteCollector implements RequestHandlerInterface
     public function __construct(RouteCollectorInterface $routeCollector)
     {
         $this->routeCollector = $routeCollector;
+        $this->setMiddlewareDispatcher(new MiddlewareDispatcher($this));
     }
 
     /**
@@ -117,9 +119,20 @@ class Route extends RouteCollector implements RequestHandlerInterface
         return $this->middlewareDispatcher->handle($request);
     }
 
-
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        return new Response();
+        return new Response(__METHOD__);
+    }
+
+    public function matchRequest(ServerRequestInterface $request)
+    {
+        if ($this->getPath() !== $request->getUri()->getPath()) {
+            return false;
+        }
+        if (!in_array($request->getMethod(), $this->getMethods())) {
+            throw new MethodNotAllowedException("Method Not Allowed");
+        }
+
+        return true;
     }
 }

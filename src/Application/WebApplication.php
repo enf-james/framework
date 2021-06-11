@@ -4,6 +4,7 @@ namespace ENF\James\Framework\Application;
 use DI\ContainerBuilder;
 use ENF\James\Framework\Container\ContainerTrait;
 use ENF\James\Framework\Middleware\MiddlewareDispatcher;
+use ENF\James\Framework\Middleware\MiddlewareDispatcherInterface;
 use ENF\James\Framework\Middleware\MiddlewareDispatcherTrait;
 use ENF\James\Framework\Response\ResponseEmitter;
 use ENF\James\Framework\Routing\RouteCollector;
@@ -35,7 +36,6 @@ class WebApplication implements ApplicationInterface, RequestHandlerInterface
     public function run()
     {
         try {
-            $this->setup();
             $request = $this->createRequest();
             $response = $this->handle($request);
             $this->emitResponse($response);
@@ -48,42 +48,10 @@ class WebApplication implements ApplicationInterface, RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        return $this->middlewareDispatcher->handle($request);
-    }
-
-
-    public function setup()
-    {
-        $this->setupContainer();
-        $this->setupRouter();
-        $this->setupMiddleware();
-    }
-
-
-    public function setupContainer()
-    {
-        $builder = new ContainerBuilder();
-        $builder->useAutowiring(true);
-        $builder->useAnnotations(false);
-        $container = $builder->build();
-        $container->set(static::class, $this);
-        $this->setContainer($container);
-    }
-
-
-    public function setupMiddleware()
-    {
-        $routeRunner = new RouteRunner();
-        $middlewareDispatcher = new MiddlewareDispatcher($routeRunner);
+        /** @var MiddlewareDispatcherInterface */
+        $middlewareDispatcher = $this->getContainer()->get(MiddlewareDispatcherInterface::class);
         $this->setMiddlewareDispatcher($middlewareDispatcher);
-    }
-
-
-    public function setupRouter()
-    {
-        $routeCollector = new RouteCollector();
-        $router = new Router();
-        $router->setRouteCollector($routeCollector);
+        return $middlewareDispatcher->handle($request);
     }
 
 

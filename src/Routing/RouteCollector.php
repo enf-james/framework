@@ -98,4 +98,12 @@ class RouteCollector implements RouteCollectorInterface
     {
         return $this->namePrefix;
     }
+
+    /**
+     * @return Route[]
+     */
+    public function getRoutes()
+    {
+        return $this->routes;
+    }
 }

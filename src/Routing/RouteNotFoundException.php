@@ -1,5 +1,5 @@
 <?php
-namespace ENF\James\Framework\Routing\Exception;
+namespace ENF\James\Framework\Routing;
 
 use ENF\James\Framework\Routing\RoutingException;
 

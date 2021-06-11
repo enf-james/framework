@@ -4,6 +4,7 @@ namespace ENF\James\Framework\Routing;
 
 interface RouteCollectorInterface
 {
+    public function getRoutes();
     public function request($method, string $path, $handler): Route;
     public function delete(string $path, $handler): Route;
     public function get(string $path, $handler): Route;

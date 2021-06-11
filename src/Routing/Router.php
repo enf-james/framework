@@ -1,8 +1,6 @@
 <?php
 namespace ENF\James\Framework\Routing;
 
-use Psr\Http\Message\ServerRequestInterface;
-
 
 class Router
 {
@@ -13,26 +11,30 @@ class Router
      */
     protected $routeCollector;
 
+    /**
+     * @var RouteMatcherInterface
+     */
+    protected $routeMatcher;
+
+
 
     public function setRouteCollector($routeCollector)
     {
         $this->routeCollector = $routeCollector;
     }
 
-
     public function getRouteCollector()
     {
         return $this->routeCollector;
     }
 
-
-    /**
-     * @return Route
-     * @throws RouteNotFoundException
-     * @throws MethodNotAllowedException
-     */
-    public function match(ServerRequestInterface $request)
+    public function setRouteMatcher($routeMatcher)
     {
+        $this->routeMatcher = $routeMatcher;
+    }
 
+    public function getRouteMatcher()
+    {
+        return $this->routeMatcher;
     }
 }

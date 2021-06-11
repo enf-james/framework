@@ -6,7 +6,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class MiddlewareDispatcher implements RequestHandlerInterface
+class MiddlewareDispatcher implements MiddlewareDispatcherInterface
 {
     /**
      * Tip of the middleware call stack
