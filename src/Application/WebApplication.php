@@ -1,15 +1,10 @@
 <?php
 namespace ENF\James\Framework\Application;
 
-use DI\ContainerBuilder;
 use ENF\James\Framework\Container\ContainerTrait;
-use ENF\James\Framework\Middleware\MiddlewareDispatcher;
 use ENF\James\Framework\Middleware\MiddlewareDispatcherInterface;
 use ENF\James\Framework\Middleware\MiddlewareDispatcherTrait;
 use ENF\James\Framework\Response\ResponseEmitter;
-use ENF\James\Framework\Routing\RouteCollector;
-use ENF\James\Framework\Routing\Router;
-use ENF\James\Framework\Routing\RouteRunner;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -20,22 +15,16 @@ class WebApplication implements ApplicationInterface, RequestHandlerInterface
     use ContainerTrait;
     use MiddlewareDispatcherTrait;
 
-    protected $projectDir;
 
-    public function getProjectDir()
+    public function setup()
     {
-        return $this->projectDir;
-    }
 
-    public function setProjectDir($projectDir)
-    {
-        $this->projectDir = $projectDir;
     }
-
 
     public function run()
     {
         try {
+            $this->setup();
             $request = $this->createRequest();
             $response = $this->handle($request);
             $this->emitResponse($response);
