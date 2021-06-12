@@ -2,7 +2,6 @@
 namespace ENF\James\Framework\Application;
 
 use ENF\James\Framework\Container\ContainerTrait;
-use ENF\James\Framework\Middleware\MiddlewareDispatcherInterface;
 use ENF\James\Framework\Middleware\MiddlewareDispatcherTrait;
 use ENF\James\Framework\Response\ResponseEmitter;
 use Psr\Http\Message\ResponseInterface;
@@ -37,10 +36,7 @@ class WebApplication implements ApplicationInterface, RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        /** @var MiddlewareDispatcherInterface */
-        $middlewareDispatcher = $this->getContainer()->get(MiddlewareDispatcherInterface::class);
-        $this->setMiddlewareDispatcher($middlewareDispatcher);
-        return $middlewareDispatcher->handle($request);
+        return $this->middlewareDispatcher->handle($request);
     }
 
 
