@@ -10,7 +10,7 @@ class RouteRunner implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         /** @var Route $route */
-        $route = $request->getAttribute(Router::ROUTE);
+        $route = $request->getAttribute('__route__');
         return $route->run($request);
     }
 }
