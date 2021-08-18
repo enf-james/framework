@@ -1,25 +1,26 @@
 <?php
 namespace ENF\James\Framework\Middleware;
 
+use ENF\James\Framework\Container\InvokerAwareTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class MiddlewareDispatcher implements MiddlewareDispatcherInterface
+class MiddlewareDispatcher implements RequestHandlerInterface
 {
-    /**
-     * Tip of the middleware call stack
-     *
-     * @var RequestHandlerInterface
-     */
-    protected $tip;
+    use InvokerAwareTrait;
+
+    protected $middleware = [];
+
+    protected $fallbackHandler;
 
 
-    public function __construct(RequestHandlerInterface $fallbackHandler)
+    public function __construct($middleware, $fallbackHandler)
     {
-        $this->tip = $fallbackHandler;
+        $this->middleware = $middleware;
+        $this->fallbackHandler = $fallbackHandler;
     }
+
 
     /**
      * @param ServerRequestInterface $request
@@ -27,18 +28,23 @@ class MiddlewareDispatcher implements MiddlewareDispatcherInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        return $this->tip->handle($request);
+        if (0 === count($this->middleware)) {
+            return $this->invoker->call([$this->fallbackHandler, 'handle'], [$request]);
+        }
+        
+        $middleware = array_shift($this->middleware);
+        return $this->invoker->call([$middleware, 'process'], [$request, $this]);
     }
 
 
-    /**
-     * @param MiddlewareInterface $middleware
-     * @return static
-     */
-    public function addMiddleware(MiddlewareInterface $middleware): MiddlewareDispatcher
+    public function setFallbackHandler($fallbackHandler)
     {
-        $this->tip = new MiddlewareDecorator($middleware, $this->tip);
+        $this->fallbackHandler = $fallbackHandler;
+    }
 
-        return $this;
+
+    public function setMiddleware($middleware)
+    {
+        $this->middleware = $middleware;
     }
 }

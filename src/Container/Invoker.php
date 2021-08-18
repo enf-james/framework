@@ -4,9 +4,30 @@ namespace ENF\James\Framework\Container;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 
-class CallableResolver implements CallableResolverInterface
+class Invoker
 {
-    use ContainerTrait;
+    /**
+     * @var ContainerInterface|null
+     */
+    private $container;
+
+    /**
+     * @param ContainerInterface|null $container
+     */
+    public function __construct(?ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
+
+    public function call($callable, array $parameters = [])
+    {
+        if ($this->container) {
+            return $this->container->call($callable, $parameters);
+        } else {
+            return call_user_func_array($this->resolve($callable), $parameters);
+        }
+    }
 
     public function resolve($callable)
     {

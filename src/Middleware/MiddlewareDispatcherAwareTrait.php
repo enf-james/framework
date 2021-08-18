@@ -2,15 +2,15 @@
 namespace ENF\James\Framework\Middleware;
 
 
-trait MiddlewareDispatcherTrait
+trait MiddlewareDispatcherAwareTrait
 {
     /**
-     * @var MiddlewareDispatcherInterface
+     * @var MiddlewareDispatcher
      */
     protected $middlewareDispatcher;
 
 
-    public function setMiddlewareDispatcher(MiddlewareDispatcherInterface $middlewareDispatcher)
+    public function setMiddlewareDispatcher($middlewareDispatcher)
     {
         $this->middlewareDispatcher = $middlewareDispatcher;
     }

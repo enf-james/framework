@@ -11,10 +11,7 @@
     "autoload": {
         "psr-4": {
             "ENF\\James\\Framework\\": "src/"
-        },
-        "files": [
-            "src/functions.php"
-        ]
+        }
     },
     "require": {
         "psr/http-server-middleware": "^1.0",

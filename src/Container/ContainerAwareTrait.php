@@ -3,12 +3,13 @@ namespace ENF\James\Framework\Container;
 
 use Psr\Container\ContainerInterface;
 
-trait ContainerTrait
+trait ContainerAwareTrait
 {
     /**
      * @var ContainerInterface
      */
     protected $container;
+    
 
     public function setContainer(ContainerInterface $container)
     {

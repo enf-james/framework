@@ -1,23 +1,9 @@
 <?php
 namespace ENF\James\Framework\Routing;
 
-use ENF\James\Framework\Middleware\MiddlewareDispatcher;
-use ENF\James\Framework\Middleware\MiddlewareDispatcherTrait;
-use Nyholm\Psr7\Response;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
-
-class Route extends RouteCollector implements RequestHandlerInterface
+class Route
 {
-    use MiddlewareDispatcherTrait;
-
-    /**
-     * @var RouteCollector
-     */
-    protected $routeCollector;
-
     /**
      * @var string[]
      */
@@ -41,18 +27,14 @@ class Route extends RouteCollector implements RequestHandlerInterface
     /**
      * @var array
      */
-    private $arguments = [];
-
-    /**
-     * @var array
-     */
-    private $middleware = [];
+    private $parameters = [];
 
 
-    public function __construct(RouteCollectorInterface $routeCollector)
+    public function __construct($methods, $path, $handler)
     {
-        $this->routeCollector = $routeCollector;
-        $this->setMiddlewareDispatcher(new MiddlewareDispatcher($this));
+        $this->methods = (array) $methods;
+        $this->path = $path;
+        $this->handler = $handler;
     }
 
     /**
@@ -71,7 +53,7 @@ class Route extends RouteCollector implements RequestHandlerInterface
 
     public function setPath($path)
     {
-        $this->path = $this->routeCollector->pathPrefix . $path;
+        $this->path = $path;
         return $this;
     }
 
@@ -98,41 +80,18 @@ class Route extends RouteCollector implements RequestHandlerInterface
 
     public function setName($name)
     {
-        $this->name = $this->routeCollector->namePrefix . $name;
+        $this->name = $name;
         return $this;
     }
 
-    public function getArguments()
+    public function getParameters()
     {
-        return $this->arguments;
+        return $this->parameters;
     }
 
-    public function setArguments($arguments)
+    public function setParameters($parameters)
     {
-        $this->arguments = $arguments;
+        $this->parameters = $parameters;
         return $this;
-    }
-
-
-    public function run(ServerRequestInterface $request): ResponseInterface
-    {
-        return $this->middlewareDispatcher->handle($request);
-    }
-
-    public function handle(ServerRequestInterface $request): ResponseInterface
-    {
-        return new Response(__METHOD__);
-    }
-
-    public function matchRequest(ServerRequestInterface $request)
-    {
-        if ($this->getPath() !== $request->getUri()->getPath()) {
-            return false;
-        }
-        if (!in_array($request->getMethod(), $this->getMethods())) {
-            throw new MethodNotAllowedException("Method Not Allowed");
-        }
-
-        return true;
     }
 }
